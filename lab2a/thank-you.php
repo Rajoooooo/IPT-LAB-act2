@@ -4,17 +4,49 @@ require "helpers/helper-functions.php";
 
 session_start();
 
-$contact_number = $_POST['contact_number'];
-$program = $_POST['program'];
+$fullname = $_SESSION['fullname'];
+$birthdate = $_SESSION['birthdate'];
+$contact_number = $_SESSION['contact_number'];
+$sex = $_SESSION['sex'];
+$program = $_SESSION['program'];
+$address = $_SESSION['address'];
+$password = md5($_POST['password']);
+$email = $_POST['email'];
 $agree = $_POST['agree'];
 
-$_SESSION['contact_number'] = $contact_number;
-$_SESSION['program'] = $program;
+// Convert birthdate to DateTime object
+$birthdateObject = new DateTime($birthdate);
+
+// Current date
+$now = new DateTime();
+
+// Compute age
+$age = $now->diff($birthdateObject)->y;
+
+
+$_SESSION['email'] = $email;
+$_SESSION['password'] = $password;
 $_SESSION['agree'] = $agree;
 
 $form_data = $_SESSION;
 
-dump_session();
+$csvFilePath = 'registrations.csv';
+
+
+$file = fopen($csvFilePath, 'a');
+
+fputcsv($file, [
+  $fullname,
+  $birthdate,
+  $age,
+  $contact_number,
+  $sex,
+  $program,
+  $address,
+  $email
+]);
+
+fclose($file);
 
 session_destroy();
 ?>
@@ -37,6 +69,8 @@ session_destroy();
       </div>
       <div class="p-section--shallow">
       
+      <form action="registrant.php" method="POST">
+
         <table aria-label="Session Data">
             <thead>
                 <tr>
@@ -57,8 +91,16 @@ session_destroy();
             <?php
             endforeach;
             ?>
+            <tr>
+                <th>Age</th>
+                <td>
+                  <?php echo $age; ?>
+                </td>
+            </tr>
             </tbody>
         </table>
+        <button type="view">Next</button>
+          </form>
       
 
       </div>

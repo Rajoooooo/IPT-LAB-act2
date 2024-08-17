@@ -1,9 +1,12 @@
 <?php
 
-define('CUSTOMERS_FILE_PATH', 'customers-100.csv');
+
+
+define('CUSTOMERS_FILE_PATH', 'customers-100000.csv');
 
 function get_hundred_customers_data()
 {
+    $start_time = microtime(true);
     $opened_file_handler = fopen(CUSTOMERS_FILE_PATH, 'r');
 
     $data = [];
@@ -23,6 +26,12 @@ function get_hundred_customers_data()
         $row_count++;
 
     }
+    fclose($opened_file_handler); 
+
+    $end_time = microtime(true);
+    $execution_time = $end_time - $start_time; 
+
+    echo "<p>Execution Time: {$execution_time} seconds</p>";
 
     return [
         'headers' => $headers,
